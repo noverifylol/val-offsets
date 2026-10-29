@@ -1,47 +1,30 @@
-# v6xCore — VALORANT offset table
-# format   name = @base (+0xNN | *0xNN)* [:type]
-#   @module   base of VALORANT-Win64-Shipping.exe
-#   @actor    one entry of player_array
-#   @name     another line in this file, used as an address
-#   +0xNN     add to the address
-#   *0xNN     read a pointer at address + NN
-#   :f32 :i32 :u8 :vec3 :vec3d :str   value read at the final address
+# build: 5.3.2-5804228, cross checked 2026-10-29
 
-# build: 5.3.2-5804228
+world              = @module *0x0DB8D780
+world_alt          = @module *0xD727560
 
-# --- root -------------------------------------------------------------------
-# GWorld ist ein globaler Zeiger, kein Klassenfeld. RVA hier eintragen.
-world              = @module *0x00000000
-
-# --- game instance ----------------------------------------------------------
 game_instance      = @world *0x1D8
 
-# --- local player chain -----------------------------------------------------
 local_players      = @game_instance *0x40
 local_player       = @local_players *0x0
 local_controller   = @local_player *0x38
 local_pawn         = @local_controller *0x518
 
-# --- camera -----------------------------------------------------------------
 camera_manager     = @local_controller *0x528
 camera_pov         = @camera_manager *0x17B0 +0x10
 camera_location    = @camera_pov +0x000 :vec3d
 camera_rotation    = @camera_pov +0x018 :vec3d
 camera_fov         = @camera_pov +0x030 :f32
 
-# --- local pawn -------------------------------------------------------------
 local_root         = @local_pawn *0x290
 local_location     = @local_root +0x170 :vec3d
 
-# --- player array -----------------------------------------------------------
 game_state         = @world *0x178
 player_array       = @game_state *0x480
 player_count       = @game_state +0x488 :i32
 
-# --- array element to character ---------------------------------------------
 entity_actor       = @actor *0x4E8
 
-# --- per actor --------------------------------------------------------------
 actor_root         = @entity_actor *0x290
 actor_location     = @actor_root +0x170 :vec3d
 actor_dormant      = @entity_actor +0x225 :u8
